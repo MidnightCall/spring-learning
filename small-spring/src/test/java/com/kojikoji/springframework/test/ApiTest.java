@@ -1,11 +1,11 @@
 package com.kojikoji.springframework.test;
 
-import com.kojikoji.springframework.BeanDefinition;
-import com.kojikoji.springframework.BeanFactory;
+import com.kojikoji.springframework.beans.factory.BeanFactory;
+import com.kojikoji.springframework.beans.factory.config.BeanDefinition;
+import com.kojikoji.springframework.beans.factory.support.DefaultListableBeanFactory;
+import com.kojikoji.springframework.beans.factory.support.DefaultSingletonBeanRegistry;
 import com.kojikoji.springframework.test.bean.UserService;
 import org.junit.Test;
-
-import javax.xml.bind.annotation.XmlAnyAttribute;
 
 /**
  * @ClassName ApiTest
@@ -19,18 +19,16 @@ public class ApiTest {
     @Test
     public void test() {
         // 1.创建工厂
-        BeanFactory beanFactory = new BeanFactory();
+        DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
 
-        // 2.创建bean
-        BeanDefinition userServiceBean = new BeanDefinition(new UserService());
+        // 2.创建注册对象
+        BeanDefinition beanDefinition = new BeanDefinition(UserService.class);
+        beanFactory.registerBeanDefinition("userService", beanDefinition);
 
-        // 3.注册bean到工厂
-        beanFactory.registerBeanDefinition("userService", userServiceBean);
-
-        // 4.装配bean
+        // 3.获取
         UserService userService = (UserService) beanFactory.getBean("userService");
 
-        // 5.调用
+        // 4.调用方法
         userService.query();
     }
 }
