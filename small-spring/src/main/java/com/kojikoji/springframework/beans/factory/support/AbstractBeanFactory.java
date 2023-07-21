@@ -15,33 +15,32 @@ import com.kojikoji.springframework.beans.factory.config.BeanDefinition;
 public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory {
     @Override
     public Object getBean(String name) throws BeansException {
+        return doGetBean(name, null);
+    }
+
+    @Override
+    public Object getBean(String name, Object... args) throws BeansException {
+        return doGetBean(name, args);
+    }
+
+    // 统一封装为模板方法
+    protected <T> T doGetBean(final String name, final Object[] args) {
         // 尝试获取单例对象
         Object bean = getSingleton(name);
         if (bean != null) {
             // 获取成功，直接返回
-            return bean;
+            return (T) bean;
         }
 
         // 获取失败，进行相应的实例化
         BeanDefinition beanDefinition = getBeanDefinition(name);
 
-        return createBean(name, beanDefinition);
+        return (T) createBean(name, beanDefinition, args);
     }
 
-    /**
-     * 获取bean定义，由DefaultListableBeanFactory实现
-     * @param beanName
-     * @return
-     * @throws BeansException
-     */
+    // 获取bean定义，由DefaultListableBeanFactory实现
     protected abstract BeanDefinition getBeanDefinition(String beanName) throws BeansException;
 
-    /**
-     * 实例化bean，由AbstractAutowireCapableBeanFactory实现
-     * @param beanName
-     * @param beanDefinition
-     * @return
-     * @throws BeansException
-     */
-    protected abstract Object createBean(String beanName, BeanDefinition beanDefinition) throws BeansException;
+    // 实例化bean，由AbstractAutowireCapableBeanFactory实现
+    protected abstract Object createBean(String beanName, BeanDefinition beanDefinition, Object[] args) throws BeansException;
 }
