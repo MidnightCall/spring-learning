@@ -1,23 +1,18 @@
 package com.kojikoji.springframework.beans;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
  * @ClassName PropertyValue
- * @Description
+ * @Description bean注册的单个属性声明
  * @Author kojikoji 1310402980@qq.com
- * @Date 2023/7/21 19:17
+ * @Date 2023/8/20 16:01
  * @Version
  */
 @Data
+@AllArgsConstructor
 public class PropertyValue {
-    // 字段名
     private String name;
-    // 字段值
     private Object value;
-
-    public PropertyValue(String name, Object value) {
-        this.name = name;
-        this.value = value;
-    }
 }

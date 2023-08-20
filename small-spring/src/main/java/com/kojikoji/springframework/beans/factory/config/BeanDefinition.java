@@ -1,6 +1,6 @@
 package com.kojikoji.springframework.beans.factory.config;
 
-import com.kojikoji.springframework.PropertyValues;
+import com.kojikoji.springframework.beans.PropertyValues;
 import lombok.Data;
 
 /**
