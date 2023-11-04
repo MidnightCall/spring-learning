@@ -3,6 +3,7 @@ package com.kojikoji.springframework.beans.factory;
 import com.kojikoji.springframework.beans.BeansException;
 import com.kojikoji.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import com.kojikoji.springframework.beans.factory.config.BeanDefinition;
+import com.kojikoji.springframework.beans.factory.config.ConfigurableBeanFactory;
 
 /**
  * @ClassName ConfigurableListableBeanFactory
@@ -12,6 +13,8 @@ import com.kojikoji.springframework.beans.factory.config.BeanDefinition;
  * @Version
  */
 
-public interface ConfigurableListableBeanFactory extends HierarchicalBeanFactory, ListableBeanFactory, AutowireCapableBeanFactory {
+public interface ConfigurableListableBeanFactory extends ConfigurableBeanFactory, ListableBeanFactory, AutowireCapableBeanFactory {
     BeanDefinition getBeanDefinition(String beanName) throws BeansException;
+
+    void preInstantiateSingletons() throws BeansException;
 }

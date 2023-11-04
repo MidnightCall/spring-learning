@@ -43,6 +43,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
                 doLoadBeanDefinitions(inputStream);
             }
         } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
             throw new BeansException("IOException parsing XML document from " + resource, e);
         }
     }
@@ -59,6 +60,13 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
         ResourceLoader resourceLoader = getResourceLoader();
         Resource resource = resourceLoader.getResource(location);
         loadBeanDefinition(resource);
+    }
+
+    @Override
+    public void loadBeanDefinitions(String... locations) throws BeansException {
+        for(String location : locations) {
+            loadBeanDefinition(location);
+        }
     }
 
     protected void doLoadBeanDefinitions(InputStream inputStream) throws ClassNotFoundException {

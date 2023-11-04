@@ -10,4 +10,7 @@
         <property name="company" value="华为"/>
     </bean>
 
+    <bean class="com.kojikoji.springframework.test.common.MyBeanPostProcessor"/>
+    <bean class="com.kojikoji.springframework.test.common.MyBeanFactoryPostProcessor"/>
+
 </beans>
