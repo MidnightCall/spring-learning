@@ -1,5 +1,6 @@
 package com.kojikoji.springframework.beans.factory.support;
 
+import com.kojikoji.springframework.beans.BeansException;
 import com.kojikoji.springframework.beans.factory.config.BeanDefinition;
 
 /**
@@ -18,4 +19,25 @@ public interface BeanDefinitionRegistry {
      * @param beanDefinition
      */
     void registerBeanDefinition(String beanName, BeanDefinition beanDefinition);
+
+    /**
+     * 判断是否包含指定名称的BeanDefinition
+     * @param beanName
+     * @return
+     */
+    boolean containsBeanDefinition(String beanName);
+
+    /**
+     * 使用Bean名称查询BeanDefinition
+     * @param beanName
+     * @return
+     * @throws BeansException
+     */
+    BeanDefinition getBeanDefinition(String beanName) throws BeansException;
+
+    /**
+     * 返回定义的所有BeanDefinition名称
+     * @return
+     */
+    String[] getBeanDefinitionNames();
 }

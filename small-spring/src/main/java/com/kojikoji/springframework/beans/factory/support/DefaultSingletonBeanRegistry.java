@@ -1,9 +1,12 @@
 package com.kojikoji.springframework.beans.factory.support;
 
+import com.kojikoji.springframework.beans.BeansException;
+import com.kojikoji.springframework.beans.factory.DisposableBean;
 import com.kojikoji.springframework.beans.factory.config.SingletonBeanRegistry;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @ClassName DefaultSingletonBeanRegistry
@@ -16,6 +19,8 @@ import java.util.Map;
 public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
 
     private final Map<String, Object> singletonObjects = new HashMap<>();
+
+    private final Map<String, DisposableBean> disposableBeans = new HashMap<>();
 
     /**
      * 获取已注册对象
@@ -33,6 +38,33 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
      */
     public void addSingleton(String beanName, Object singletonObject) {
         singletonObjects.put(beanName, singletonObject);
+    }
+
+    /**
+     * 注册销毁Bean
+     * @param beanName
+     * @param bean
+     */
+    public void registerDisposableBean(String beanName, DisposableBean bean) {
+        disposableBeans.put(beanName, bean);
+    }
+
+    /**
+     * 按加载顺序的逆序销毁DisposableBean
+     */
+    public void destroySingletons() {
+        Set<String> keySet = this.disposableBeans.keySet();
+        Object[] disposableBeanNames = keySet.toArray();
+
+        for(int i = disposableBeanNames.length - 1; i >= 0; --i) {
+            Object beanName = disposableBeanNames[i];
+            DisposableBean disposableBean = disposableBeans.remove(beanName);
+            try {
+                disposableBean.destroy();
+            } catch (Exception e) {
+                throw new BeansException("Destroy method on bean with name '" + beanName + "' threw an exception", e);
+            }
+        }
     }
 
 }

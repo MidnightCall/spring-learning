@@ -1,9 +1,11 @@
 package com.kojikoji.springframework.beans.factory.support;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import com.kojikoji.springframework.beans.BeansException;
 import com.kojikoji.springframework.beans.PropertyValue;
 import com.kojikoji.springframework.beans.PropertyValues;
+import com.kojikoji.springframework.beans.factory.DisposableBean;
 import com.kojikoji.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import com.kojikoji.springframework.beans.factory.config.BeanDefinition;
 import com.kojikoji.springframework.beans.factory.config.BeanPostProcessor;
@@ -38,9 +40,17 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             throw new BeansException("Instantiation of bean failed", e);
         }
 
+        registerDisposableBeanIfNecessary(beanName, bean, beanDefinition);
+
         // 将创建对象加入单例
         addSingleton(beanName, bean);
         return bean;
+    }
+
+    private void registerDisposableBeanIfNecessary(String beanName, Object bean, BeanDefinition beanDefinition) {
+        if(bean instanceof DisposableBean || StrUtil.isNotEmpty(beanDefinition.getDestroyMethodName())) {
+            registerDisposableBean(beanName, new DisposableBeanAdaptor(bean, beanName, beanDefinition));
+        }
     }
 
     /**
@@ -102,9 +112,13 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         // 1.执行 BeanPostProcessor Before 处理
         Object wrappedBean = applyBeanPostProcessorsBeforeInitialization(bean, beanName);
         
-        // 2.待完成内容：invokeInitMethod(beanName, wrappedBean, beanDefinition);
-        invokeInitMethods(beanName, wrappedBean, beanDefinition);
-        
+        // 2.执行Bean对象的初始化方法
+        try {
+            invokeInitMethods(beanName, wrappedBean, beanDefinition);
+        } catch (Exception e) {
+            throw new BeansException("Invocation of init method of bean[" + beanName + "] failed", e);
+        }
+
         // 3.执行 BeanPostProcessor After 处理
         wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);
         return wrappedBean;
