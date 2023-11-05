@@ -21,11 +21,14 @@ import java.util.Map;
 public abstract class AbstractApplicationContext extends DefaultResourceLoader implements ConfigurableApplicationContext {
     @Override
     public void refresh() throws BeansException {
-        // 1.创建BeanFactory，并加载 BeanDefinition
+        // 1.创建 BeanFactory，并加载 BeanDefinition
         refreshBeanFactory();
 
-        // 2.获取BeanFactory
+        // 2.获取 BeanFactory
         ConfigurableListableBeanFactory beanFactory = getBeanFactory();
+
+        // 3.添加 ApplicationContextAwareProcessor，让继承自 ApplicationContextAware 的 Bean 对象都能感知所属的 ApplicationContext
+        beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
 
         // 3.在 Bean 实例化之前，执行 BeanFactoryPostProcessor
         invokeBeanFactoryPostProcessor(beanFactory);

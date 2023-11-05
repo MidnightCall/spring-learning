@@ -87,17 +87,15 @@ public class ApiTest {
     @Test
     public void test_xml() {
         // 创建BeanFactory
-        DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
 
-        // 读取配置文件&注册Bean
-        XmlBeanDefinitionReader xmlBeanDefinitionReader = new XmlBeanDefinitionReader(beanFactory);
-        xmlBeanDefinitionReader.loadBeanDefinition("src/test/resources/spring.xml");
+        // 获取Bean对象调用方法
+        UserService userService = applicationContext.getBean("userService", UserService.class);
+        String result = userService.queryUserInfo();
+        System.out.println("测试结果：" + result);
 
-        // 获取对象
-        UserService userService = (UserService) beanFactory.getBean("userService");
-
-        // 调用方法
-        userService.queryUserInfo();
+        System.out.println("ApplicationContextAware：" + userService.getApplicationContext());
+        System.out.println("BeanFactoryAware：" + userService.getBeanFactory());
     }
 
     /**

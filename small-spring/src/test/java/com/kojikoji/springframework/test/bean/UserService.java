@@ -1,5 +1,13 @@
 package com.kojikoji.springframework.test.bean;
 
+import com.kojikoji.springframework.beans.BeansException;
+import com.kojikoji.springframework.beans.factory.BeanClassLoaderAware;
+import com.kojikoji.springframework.beans.factory.BeanFactory;
+import com.kojikoji.springframework.beans.factory.BeanFactoryAware;
+import com.kojikoji.springframework.beans.factory.BeanNameAware;
+import com.kojikoji.springframework.beans.factory.context.ApplicationContext;
+import com.kojikoji.springframework.beans.factory.context.ApplicationContextAware;
+
 /**
  * @ClassName UserService
  * @Description
@@ -8,7 +16,11 @@ package com.kojikoji.springframework.test.bean;
  * @Version
  */
 
-public class UserService {
+public class UserService implements BeanNameAware, BeanClassLoaderAware, ApplicationContextAware, BeanFactoryAware {
+
+    private ApplicationContext applicationContext;
+
+    private BeanFactory beanFactory;
 
     private String uId;
 
@@ -17,6 +29,26 @@ public class UserService {
     private String location;
 
     private UserDao userDao;
+
+    @Override
+    public void setBeanClassLoader(ClassLoader classLoader) {
+        System.out.println("ClassLoader：" + classLoader);
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = beanFactory;
+    }
+
+    @Override
+    public void setBeanName(String beanName) {
+        System.out.println("Bean Name is:" + beanName);
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 
     public UserService() {
     }
@@ -27,13 +59,6 @@ public class UserService {
 
     public String queryUserInfo() {
         return userDao.queryUserName(uId) + ",公司:" + company + ", 地点" + location;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("");
-        sb.append("").append(uId);
-        return sb.toString();
     }
 
     public String getuId() {
@@ -67,4 +92,14 @@ public class UserService {
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
     }
+
+
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
+    public BeanFactory getBeanFactory() {
+        return beanFactory;
+    }
+
 }

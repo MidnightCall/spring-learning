@@ -14,7 +14,8 @@ import java.util.Map;
 public class UserDao {
     private static Map<String, String> hashMap = new HashMap<>();
 
-    static {
+    public void initDataMethod() {
+        System.out.println("执行：init-method");
         hashMap.put("100001", "kojikoji");
         hashMap.put("100002", "harutya");
         hashMap.put("100003", "osamu");
