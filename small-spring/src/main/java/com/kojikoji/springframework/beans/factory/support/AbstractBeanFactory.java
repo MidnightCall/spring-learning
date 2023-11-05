@@ -2,6 +2,7 @@ package com.kojikoji.springframework.beans.factory.support;
 
 import com.kojikoji.springframework.beans.BeansException;
 import com.kojikoji.springframework.beans.factory.BeanFactory;
+import com.kojikoji.springframework.beans.factory.FactoryBean;
 import com.kojikoji.springframework.beans.factory.ListableBeanFactory;
 import com.kojikoji.springframework.beans.factory.config.BeanDefinition;
 import com.kojikoji.springframework.beans.factory.config.BeanPostProcessor;
@@ -19,7 +20,7 @@ import java.util.List;
  * @Version
  */
 
-public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements ConfigurableBeanFactory {
+public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport implements ConfigurableBeanFactory {
 
     // ClassLoader to resolve bean class names with, if necessary
     private ClassLoader beanClassLoader = ClassUtils.getDefaultClassLoader();
@@ -44,16 +45,32 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
     // 统一封装为模板方法
     protected <T> T doGetBean(final String name, final Object[] args) {
         // 尝试获取单例对象
-        Object bean = getSingleton(name);
-        if (bean != null) {
-            // 获取成功，直接返回
-            return (T) bean;
+        Object sharedInstance = getSingleton(name);
+        if (sharedInstance != null) {
+            // 若为 FactoryBean，则需要调用 FactoryBean#getObject
+            return (T) getObjectForBeanInstance(sharedInstance, name);
         }
 
         // 获取失败，进行相应的实例化
         BeanDefinition beanDefinition = getBeanDefinition(name);
+        Object bean = createBean(name, beanDefinition, args);
 
-        return (T) createBean(name, beanDefinition, args);
+        return (T) getObjectForBeanInstance(bean, name);
+    }
+
+    private Object getObjectForBeanInstance(Object beanInstance, String beanName) {
+        if(!(beanInstance instanceof FactoryBean)) {
+            return beanInstance;
+        }
+
+        Object object = getCachedObjectForFactoryBean(beanName);
+
+        if(object == null) {
+            FactoryBean<?> factoryBean = (FactoryBean<?>) beanInstance;
+            object = getObjectFromFactoryBean(factoryBean, beanName);
+        }
+
+        return object;
     }
 
     // 获取bean定义，由DefaultListableBeanFactory实现

@@ -16,49 +16,15 @@ import com.kojikoji.springframework.beans.factory.context.ApplicationContextAwar
  * @Version
  */
 
-public class UserService implements BeanNameAware, BeanClassLoaderAware, ApplicationContextAware, BeanFactoryAware {
-
-    private ApplicationContext applicationContext;
-
-    private BeanFactory beanFactory;
+public class UserService {
 
     private String uId;
-
     private String company;
-
     private String location;
-
-    private UserDao userDao;
-
-    @Override
-    public void setBeanClassLoader(ClassLoader classLoader) {
-        System.out.println("ClassLoader：" + classLoader);
-    }
-
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.beanFactory = beanFactory;
-    }
-
-    @Override
-    public void setBeanName(String beanName) {
-        System.out.println("Bean Name is:" + beanName);
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
-
-    public UserService() {
-    }
-
-    public UserService(String uId) {
-        this.uId = uId;
-    }
+    private IUserDao userDao;
 
     public String queryUserInfo() {
-        return userDao.queryUserName(uId) + ",公司:" + company + ", 地点" + location;
+        return userDao.queryUserName(uId) + "," + company + "," + location;
     }
 
     public String getuId() {
@@ -85,21 +51,12 @@ public class UserService implements BeanNameAware, BeanClassLoaderAware, Applica
         this.location = location;
     }
 
-    public UserDao getUserDao() {
+    public IUserDao getUserDao() {
         return userDao;
     }
 
-    public void setUserDao(UserDao userDao) {
+    public void setUserDao(IUserDao userDao) {
         this.userDao = userDao;
-    }
-
-
-    public ApplicationContext getApplicationContext() {
-        return applicationContext;
-    }
-
-    public BeanFactory getBeanFactory() {
-        return beanFactory;
     }
 
 }
